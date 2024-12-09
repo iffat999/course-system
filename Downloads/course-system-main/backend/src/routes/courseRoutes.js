@@ -10,4 +10,3 @@ router.delete('/course/:id', courseController.deleteCourse);
 
 module.exports = router;
 
-
