@@ -2,24 +2,30 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const studentRoutes = require('./src/routes/studentRoutes');  // Make sure the path is correct
+
+const studentRoutes = require('./src/routes/studentRoutes');
 const courseRoutes = require('./src/routes/courseRoutes');
+const authRoutes = require("./src/routes/authRoutes");
+
 const app = express();
 
-// Middleware to parse JSON request bodies
-app.use(bodyParser.json());
-app.use(cors());  // Enable CORS for cross-origin requests
+// Middleware
+app.use(cors());
+app.use(express.json());  // Parse incoming JSON data
 
-// Register the student routes with the '/api' prefix
-app.use('/api', studentRoutes); 
-app.use(courseRoutes);
-// Connect to MongoDB (adjust the URI as needed)
-mongoose.connect('mongodb://localhost:27017/student-course', { useNewUrlParser: true, useUnifiedTopology: true })
+// Routes
+app.use('/api', studentRoutes);
+app.use('/api/auth', authRoutes);  // Ensure that the authRoutes is used under /api/auth
+app.use('/api', courseRoutes);
+
+// MongoDB connection
+mongoose.connect('mongodb://localhost/course-system', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.log('Failed to connect to MongoDB', err));
+  .catch((err) => console.error('MongoDB connection error:', err));
 
 // Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
